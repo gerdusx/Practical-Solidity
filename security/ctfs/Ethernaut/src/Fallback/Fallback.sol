@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.10; // Latest solidity version
 
-import "forge-std/Test.sol";
-import "./FallbackFactory.sol";
+import 'openzeppelin-contracts/contracts/utils/math/SafeMath.sol'; // Path change of openzeppelin contract
 
 contract Fallback {
 
+  using SafeMath for uint256;
   mapping(address => uint) public contributions;
-  address public owner;
+  address payable public owner;
 
-  constructor() {
-    owner = msg.sender;
+  constructor() public {
+    owner = payable(msg.sender); // Type issues must be payable address
     contributions[msg.sender] = 1000 * (1 ether);
   }
 
@@ -23,10 +23,10 @@ contract Fallback {
     }
 
   function contribute() public payable {
-    require(msg.value < 0.001 ether);
+    require(msg.value < 0.001 ether, "msg.value must be < 0.001"); // Add message with require
     contributions[msg.sender] += msg.value;
     if(contributions[msg.sender] > contributions[owner]) {
-      owner = msg.sender;
+      owner = payable(msg.sender); // Type issues must be payable address
     }
   }
 
@@ -35,22 +35,12 @@ contract Fallback {
   }
 
   function withdraw() public onlyOwner {
-    payable(owner).transfer(address(this).balance);
+    owner.transfer(address(this).balance);
   }
 
-  receive() external payable {
-    require(msg.value > 0 && contributions[msg.sender] > 0);
-    owner = msg.sender;
-  }
-}
-
-contract ContractTest is Test {
-
-  function setUp() public {
-
-  }
-
-  function testFallback() public {
-    console.log("test");
+  
+  fallback() external payable { // naming has switched to fallback
+    require(msg.value > 0 && contributions[msg.sender] > 0, "tx must have value and msg.send must have made a contribution"); // Add message with require
+    owner = payable(msg.sender); // Type issues must be payable address
   }
 }

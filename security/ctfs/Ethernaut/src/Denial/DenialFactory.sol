@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.10;
 
-import './base/Level.sol';
+import '../BaseLevel.sol';
 import './Denial.sol';
 
 contract DenialFactory is Level {

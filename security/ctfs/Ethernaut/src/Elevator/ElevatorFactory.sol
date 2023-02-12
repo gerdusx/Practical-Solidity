@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.10;
 
-import './base/Level.sol';
+import '../BaseLevel.sol';
 import './Elevator.sol';
 
 contract ElevatorFactory is Level {
@@ -13,7 +13,7 @@ contract ElevatorFactory is Level {
     return address(instance);
   }
 
-  function validateInstance(address payable _instance, address) override public view returns (bool) {
+  function validateInstance(address payable _instance, address) override public returns (bool) {
     Elevator elevator = Elevator(_instance);
     return elevator.top();
   }
